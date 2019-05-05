@@ -8,10 +8,19 @@ using namespace std;
 
 int main()
 {
-	BigInt t = "10", t2="2", e;
-	e = t - t2;
-	cout << (t / t2);
-
+	BigInt t = "10", t2("200"), e;
+	cout << "t = 10, t2 = 200" << endl;
+	cout << "t - t2 = " << (t - t2) << endl;
+	cout << "t + t2 = " << (t + t2) << endl;
+	cout << "t2 * t = " << (t2 * t) << endl;
+	cout << "t2 / t = " << (t2 / t) << endl;
+	cout << "t2 % t = " << (t2 % t) << endl;
+	cout << "t == t2 => " << (t == t2) << endl;
+	cout << "t != t2 => " << (t != t2) << endl;
+	cout << "t >= t2 => " << (t >= t2) << endl;
+	cout << "t <= t2 => " << (t <= t2) << endl;
+	cout << "t > t2 => " << (t > t2) << endl;
+	cout << "t < t2 => " << (t < t2) << endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

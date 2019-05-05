@@ -93,8 +93,8 @@ BigInt BigInt::operator+(const BigInt & t) {
 }
 
 BigInt BigInt::operator-(const BigInt & t) {
+	BigInt temp;
 	if (size >= t.size) {
-		BigInt temp;
 		if (t.number == "0") { 
 			temp = *this;
 			return temp;
@@ -137,18 +137,19 @@ BigInt BigInt::operator-(const BigInt & t) {
 			temp.number.push_back(result + 48);
 		}
 		if (carry != 0) temp.number.push_back(carry + 48);
-		temp.size = temp.number.length();
+		temp.size = temp.number.length();		
 		temp.sign = sign;
+		temp.removeInsignificantNumbers();
 		return temp;
+	
 	}
 	else {
 		BigInt a = t;
 		BigInt temp = a - *this;
-		temp.sign = !temp.sign;
+		temp.sign = !temp.sign;	
 		temp.removeInsignificantNumbers();
 		return temp;
-	}
-	
+	}	
 }
 
 BigInt BigInt::absolute() {
@@ -164,9 +165,12 @@ ostream & operator<<(ostream & c, const BigInt & d) {
 }
 
 void BigInt::removeInsignificantNumbers() {
+	if (number.length() == 1) return;
 	int l = number.length() - 1;
-	for (int i = l; number[i] == '0'; i--) {
+	while (l >= 0) {
+		if (number[l] != '0') break;
 		number.pop_back();
+		l--;
 	}
 	this->size = number.length();
 }
@@ -193,17 +197,10 @@ bool BigInt::operator!= (const BigInt& b) {
 }
 bool BigInt::operator> (const BigInt& b) {
 	if (size > b.size) return true;
-	if (number.length() == b.size) {
-		bool prevSign = this->sign;
-		return ((*this - b).sign == prevSign);
-	}
+	return false;
 }
 bool BigInt::operator< (const BigInt& b) {
-	if (size < b.size) return true;
-	if (size == b.size) {
-		bool prevSign = this->sign;
-		return ((*this - b).sign != prevSign);
-	}
+	return !(*this > b || *this == b);
 }
 bool BigInt::operator>= (const BigInt& b) {
 	return (*this > b || *this == b);
@@ -215,9 +212,15 @@ bool BigInt::operator<= (const BigInt& b) {
 BigInt BigInt::operator* (const BigInt& b) {
 	BigInt temp(*this);
 	BigInt mul(b);
-	while (mul != 0) {
-		temp = temp + b;
+	BigInt i = 0;
+	while (i < mul) {
+		BigInt one("1");
+		temp = temp + *this;
+		mul = mul - one;
+		i = i + 1;
 	}
+	temp.sign = (sign || b.sign);
+	temp.sign = !(sign && b.sign);
 	return temp;
 }
 BigInt BigInt::operator/ (const BigInt& b) {
@@ -225,8 +228,10 @@ BigInt BigInt::operator/ (const BigInt& b) {
 	BigInt result;
 	while (temp >= b) {
 		temp = temp - b;
-		result = result + 1;
+		result = result + BigInt(1);
 	}
+	temp.sign = (sign || b.sign);
+	temp.sign = !(sign && b.sign);
 	return result;
 }
 BigInt BigInt::operator% (const BigInt& b) {
